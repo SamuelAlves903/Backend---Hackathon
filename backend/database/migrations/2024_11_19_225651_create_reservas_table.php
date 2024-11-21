@@ -29,8 +29,8 @@ return new class extends Migration
                         ->on('ambientes') // Nome da tabela referenciada
                         ->onDelete('cascade'); // Ação ao excluir o registro na tabela 'ambientes'
 
-            $table->date('horario_inicio');
-            $table->date('horario_fim');
+            $table->string('horario_inicio');
+            $table->string('horario_fim');
             $table->string('status');
 
             $table->timestamps();

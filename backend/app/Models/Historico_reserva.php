@@ -10,4 +10,9 @@ class Historico_reserva extends Model
     use HasFactory;
 
     protected $fillable = ['reserva_id', 'alteracoes', 'modificado_em'];
+
+    public function reserva()
+    {
+        return $this->belongsTo(User::class, 'reserva_id');
+    }
 }
