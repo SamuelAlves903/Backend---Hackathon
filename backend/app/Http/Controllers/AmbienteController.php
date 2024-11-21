@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Ambiente;
 use Illuminate\Http\Request;
 
 class AmbienteController extends Controller
@@ -11,7 +12,8 @@ class AmbienteController extends Controller
      */
     public function index()
     {
-        //
+        $ambientes = Ambiente::get();
+        return $ambientes;
     }
 
     /**
@@ -19,7 +21,7 @@ class AmbienteController extends Controller
      */
     public function create()
     {
-        //
+        return view('ambientes.create');
     }
 
     /**
@@ -27,15 +29,33 @@ class AmbienteController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'tipo' => 'required|string',
+            'status' => 'required|string',
+            'descricao' => 'required|string',
+        ]);
 
+        try {
+            $ambiente = Ambiente::create($dados);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao salvar o ambiente. Por favor, tente novamente.'], 500);
+        }
+
+        return response()->json([
+            'message' => 'Ambiente criado com sucesso!',
+            'ambiente' => $ambiente
+        ], 201);
+
+    }
     /**
      * Display the specified resource.
      */
     public function show(string $id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+
+        return  $ambiente;
     }
 
     /**
@@ -43,7 +63,9 @@ class AmbienteController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+
+        return $ambiente;
     }
 
     /**
@@ -51,7 +73,18 @@ class AmbienteController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+
+        $dados = $request->validate([
+            'nome' => 'required|string|max:255',
+            'tipo' => 'required|string',
+            'status' => 'required|string',
+            'descricao' => 'required|string',
+        ]);
+
+        $ambiente->update($dados);
+
+        return redirect('/ambientes');
     }
 
     /**
@@ -59,6 +92,10 @@ class AmbienteController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $ambiente = Ambiente::find($id);
+
+        $ambiente->delete();
+
+        return redirect('/ambiente');
     }
 }

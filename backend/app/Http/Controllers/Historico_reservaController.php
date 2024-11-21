@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Historico_reserva;
 use Illuminate\Http\Request;
 
 class Historico_reservaController extends Controller
@@ -11,7 +12,9 @@ class Historico_reservaController extends Controller
      */
     public function index()
     {
-        //
+        $historico_reservas = Historico_reserva::with(['reserva'])->get();
+
+        return response()->json($historico_reservas);
     }
 
     /**
@@ -19,7 +22,7 @@ class Historico_reservaController extends Controller
      */
     public function create()
     {
-        //
+        return view('historico_reservas.create');
     }
 
     /**
@@ -27,7 +30,22 @@ class Historico_reservaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $dados = $request->validate([
+            'reserva_id' => 'required|exists:reservas,id',
+            'alteracoes' => 'required|string',
+            'modificado_em' => 'required|date'
+        ]);
+
+        try {
+            $historico_reserva = Historico_reserva::create($dados);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao ver o historico da reserva. Por favor, tente novamente.'], 500);
+        }
+
+        return response()->json([
+            'message' => 'historico da reserva',
+            'historico_reserva' => $historico_reserva
+        ], 201);
     }
 
     /**
@@ -35,7 +53,13 @@ class Historico_reservaController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $historico_reserva = Historico_reserva::with(['reserva'])->find($id);
+
+        if (!$historico_reserva) {
+            return response()->json(['mensagem' => 'Historico da Reserva não encontrada.'], 404);
+        }
+
+        return response()->json($historico_reserva);
     }
 
     /**
@@ -43,7 +67,14 @@ class Historico_reservaController extends Controller
      */
     public function edit(string $id)
     {
-        //
+
+        $historico_reserva= Historico_reserva::with(['reserva'])->find($id);
+
+        if (!$historico_reserva) {
+            return response()->json(['mensagem' => 'Historico da Reserva não encontrada.'], 404);
+        }
+
+        return response()->json($historico_reserva);
     }
 
     /**
@@ -51,7 +82,24 @@ class Historico_reservaController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $historico_reserva = Historico_reserva::find($id);
+
+        $dados = $request->validate([
+            'reserva_id' => 'required|exists:reservas,id',
+            'alteracoes' => 'required|string',
+            'modificado_em' => 'required|date'
+        ]);
+
+        try {
+            $historico_reserva->update($dados);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Erro ao ver o historico da reserva. Por favor, tente novamente.'], 500);
+        }
+
+        return response()->json([
+            'message' => 'historico da reserva',
+            'historico_reserva' => $historico_reserva
+        ], 201);
     }
 
     /**
@@ -59,6 +107,14 @@ class Historico_reservaController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $historico_reserva = Historico_reserva::find($id);
+
+        if (!$historico_reserva) {
+            return response()->json(['mensagem' => 'historico da Reserva não encontrada.'], 404);
+        }
+
+        $historico_reserva->delete();
+
+        return response()->json(['mensagem' => 'Historico da reserva excluída com sucesso!']);
     }
 }
