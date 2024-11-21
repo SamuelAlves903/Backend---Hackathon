@@ -31,6 +31,7 @@ return new class extends Migration
 
             $table->string('horario_inicio');
             $table->string('horario_fim');
+            $table->date('data');
             $table->string('status');
 
             $table->timestamps();

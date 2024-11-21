@@ -14,8 +14,9 @@ return new class extends Migration
         Schema::create('ambientes', function (Blueprint $table) {
             $table->id();
             $table->string('nome');
-            $table->string('tipo');
-            $table->string('status');
+            $table->string('local');
+            $table->string('capacidade');
+            $table->string('recursos');
             $table->string('descricao');
             $table->timestamps();
         });
